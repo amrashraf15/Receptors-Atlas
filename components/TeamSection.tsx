@@ -56,7 +56,7 @@ export function TeamSection() {
                 className="
                   relative flex h-12 w-12 items-center justify-center
                   rounded-2xl
-                  bg-gradient-to-br from-primary/80 to-accent/60
+                  bg-linear-to-br from-primary/80 to-accent/60
                   text-primary-foreground
                   font-mono text-sm font-semibold
                   shadow-md
@@ -87,7 +87,7 @@ export function TeamSection() {
               </div>
 
               {/* bottom accent line */}
-              <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-border/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="absolute bottom-0 left-0 h-px w-full bg-linear-to-r from-transparent via-border/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
             </article>
           ))}
         </div>

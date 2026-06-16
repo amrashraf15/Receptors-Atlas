@@ -5,10 +5,7 @@ import Link from "next/link";
 
 import {
   ArrowRight,
-  Database,
   Dna,
-  Globe,
-  Microscope,
 } from "lucide-react";
 
 import heroImg from "@/public/hero-network.jpg";
@@ -17,7 +14,7 @@ export function HeroSection() {
   return (
     <section className="relative isolate overflow-hidden border-b border-border">
       {/* Background Image */}
-      <div className="absolute inset-0 -z-10">
+      <div className="absolute inset-0 -z-40">
         <Image
           src={heroImg}
           alt="Scientific receptor network"

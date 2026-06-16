@@ -3,6 +3,24 @@ import { ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { Receptor } from "@/types/receptor";
 
+/* -------------------------------------------------------------------------- */
+/* Safe helpers                                                               */
+/* -------------------------------------------------------------------------- */
+
+function safeText(value: unknown, fallback = "Unknown") {
+  if (!value) return fallback;
+  return String(value);
+}
+
+function safeNumber(value: unknown, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Component                                                                  */
+/* -------------------------------------------------------------------------- */
+
 interface ReceptorCardProps {
   receptor: Receptor;
 }
@@ -32,15 +50,15 @@ export function ReceptorCard({ receptor }: ReceptorCardProps) {
       <div className="relative flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
-            {receptor.family}
+            {safeText(receptor.family)}
           </p>
 
-          <h3 className="mt-1 font-mono text-base font-semibold text-foreground leading-tight">
-            {receptor.seqName}
+          <h3 className="mt-1 font-mono text-base font-semibold leading-tight">
+            {safeText(receptor.seqName)}
           </h3>
 
           <p className="mt-2 text-sm text-muted-foreground line-clamp-2 leading-relaxed">
-            {receptor.description}
+            {safeText(receptor.description)}
           </p>
         </div>
 
@@ -62,14 +80,9 @@ export function ReceptorCard({ receptor }: ReceptorCardProps) {
       <div className="relative flex flex-wrap gap-2">
         <Badge
           variant="outline"
-          className="
-            bg-muted/40 text-muted-foreground
-            border-border/50
-            hover:border-primary/30
-            transition-colors
-          "
+          className="bg-muted/40 text-muted-foreground border-border/50"
         >
-          {receptor.species}
+          {safeText(receptor.species)}
         </Badge>
 
         {receptor.chromosome && (
@@ -100,14 +113,14 @@ export function ReceptorCard({ receptor }: ReceptorCardProps) {
         <div>
           Length{" "}
           <span className="text-foreground font-medium">
-            {receptor.length}
+            {safeNumber(receptor.length)}
           </span>{" "}
           aa
         </div>
 
         {receptor.uniprot && (
           <div className="font-mono text-[11px] text-muted-foreground/80">
-            {receptor.uniprot}
+            {safeText(receptor.uniprot)}
           </div>
         )}
       </div>
