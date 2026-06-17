@@ -317,7 +317,7 @@ export function ReceptorTable({
                 z-20
                 border-b
                 border-white/10
-                bg-background/80
+                bg-card/80 
                 backdrop-blur-xl
               "
             >
@@ -380,7 +380,7 @@ export function ReceptorTable({
                       border-white/5
                       transition-all
                       duration-300
-                      hover:bg-primary/5
+                      hover:bg-muted/50
                     "
                   >
                     {row
@@ -433,7 +433,7 @@ export function ReceptorTable({
             items-center
             justify-between
             border-t
-            border-white/10
+            border-border/60
             bg-white/2
             px-6
             py-5
