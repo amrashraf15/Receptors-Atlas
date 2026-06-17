@@ -434,7 +434,7 @@ export function ReceptorTable({
             justify-between
             border-t
             border-white/10
-            bg-white/[0.02]
+            bg-white/2
             px-6
             py-5
           "
