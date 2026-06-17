@@ -1,7 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ReceptorFilters, receptorsRepository, ReceptorStats } from "@/lib/receptors.repository";
+import {
+  ReceptorFilters,
+  receptorsRepository,
+  ReceptorStats,
+} from "@/lib/receptors.repository";
 import { ReceptorHeader } from "./components/ReceptorHeader";
 import { ReceptorToolbar } from "./components/ReceptorToolbar";
 import { ReceptorActiveFilters } from "./components/ReceptorActiveFilters";
@@ -25,7 +29,7 @@ export default function ReceptorsClient({ stats }: Props) {
 
     (["families", "localizations", "chromosomes"] as const).forEach((k) => {
       (filters[k] as string[] | undefined)?.forEach((v) =>
-        out.push({ key: k, value: v })
+        out.push({ key: k, value: v }),
       );
     });
 
@@ -44,17 +48,17 @@ export default function ReceptorsClient({ stats }: Props) {
 
   return (
     <div className="min-h-screen">
-      
-
       <ReceptorHeader stats={stats} />
 
       <ReceptorToolbar
         search={search}
-        setSearch={setSearch}
+        onSearchChange={setSearch}
         view={view}
-        setView={setView}
+        onViewChange={setView}
         filters={filters}
-        setFilters={setFilters}
+        onFiltersChange={setFilters}
+        onResetFilters={() => setFilters({})}
+        totalResults={data.length}
       />
 
       <ReceptorActiveFilters
@@ -66,10 +70,7 @@ export default function ReceptorsClient({ stats }: Props) {
       <ReceptorLayout
         view={view}
         data={data}
-        filters={filters}
-        setFilters={setFilters}
       />
-
     </div>
   );
 }
