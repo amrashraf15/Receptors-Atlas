@@ -1,94 +1,62 @@
-const team = [
+const contributors = [
   {
-    name: "Dr. Elena Martínez",
-    role: "Principal Investigator",
-    focus: "GPCR signaling",
+    role: "Plant Bioinformatics Lead",
+    focus: "Hexaploid Genome Assembly & Locus Annotation",
+    department: "Functional Genomics Group",
   },
   {
-    name: "Dr. Hiroshi Tanaka",
-    role: "Computational Lead",
-    focus: "Bioinformatics",
+    role: "Molecular Pathology Specialist",
+    focus: "Receptor-Mediated Immunity & Pathogen Perception",
+    department: "Crop Defense Signaling Laboratory",
   },
   {
-    name: "Dr. Amara Okafor",
-    role: "Curation Director",
-    focus: "Nuclear receptors",
+    role: "Protein Structure & Domain Curation",
+    focus: "Kinase Domain Catalysis & InterPro Mapping",
+    department: "Structural Bioinformatics Unit",
   },
   {
-    name: "Dr. Lukas Berger",
-    role: "Data Engineering",
-    focus: "Research infrastructure",
+    role: "Biological Data Engineering",
+    focus: "Database Interoperability & FAIR Data Stewardship",
+    department: "Research Computing Infrastructure",
   },
 ];
 
 export function TeamSection() {
   return (
-    <section className="relative border-t border-border/60 bg-background/40 backdrop-blur-xl">
-      <div className="container-page py-20">
-        {/* HEADER */}
-        <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-foreground">
-          Team
-        </h2>
+    <section className="border-b border-border bg-surface-subtle py-14 sm:py-18">
+      <div className="container-page">
+        <div className="max-w-2xl">
+          <div className="text-xs font-semibold uppercase tracking-wider text-primary">
+            Curation & Governance
+          </div>
 
-        {/* GRID */}
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {team.map((member) => (
-            <article
-              key={member.name}
-              className="
-                group relative overflow-hidden
-                rounded-2xl border border-border/60
-                bg-card/60 backdrop-blur-xl
-                p-5
-                transition-all duration-300
-                hover:-translate-y-1 hover:shadow-xl
-                hover:border-primary/40
-              "
+          <h2 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+            Scientific Stewardship & Working Groups
+          </h2>
+
+          <p className="mt-2 text-sm sm:text-base text-muted-foreground leading-relaxed">
+            Multi-disciplinary expertise guiding gene model validation, domain architecture consistency, and database alignment with international standards.
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {contributors.map((item) => (
+            <div
+              key={item.role}
+              className="rounded-lg border border-border bg-card p-5 shadow-2xs"
             >
-              {/* ambient glow */}
-              <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-primary/10 blur-3xl" />
-                <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-accent/10 blur-3xl" />
+              <div className="text-xs font-mono font-medium text-primary">
+                {item.department}
               </div>
 
-              {/* avatar */}
-              <div
-                className="
-                  relative flex h-12 w-12 items-center justify-center
-                  rounded-2xl
-                  bg-linear-to-br from-primary/80 to-accent/60
-                  text-primary-foreground
-                  font-mono text-sm font-semibold
-                  shadow-md
-                  transition-transform duration-300
-                  group-hover:scale-110 group-hover:rotate-3
-                "
-              >
-                {member.name
-                  .split(" ")
-                  .slice(-2)
-                  .map((s) => s[0])
-                  .join("")}
-              </div>
-
-              {/* name */}
-              <h3 className="relative mt-4 font-semibold text-foreground">
-                {member.name}
+              <h3 className="mt-2 text-sm sm:text-base font-semibold text-foreground">
+                {item.role}
               </h3>
 
-              {/* role */}
-              <p className="relative text-sm text-muted-foreground">
-                {member.role}
+              <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                {item.focus}
               </p>
-
-              {/* focus */}
-              <div className="relative mt-3 inline-flex items-center rounded-full border border-border/60 bg-muted/40 px-2.5 py-1 text-[11px] uppercase tracking-wider text-accent">
-                {member.focus}
-              </div>
-
-              {/* bottom accent line */}
-              <div className="absolute bottom-0 left-0 h-px w-full bg-linear-to-r from-transparent via-border/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-            </article>
+            </div>
           ))}
         </div>
       </div>

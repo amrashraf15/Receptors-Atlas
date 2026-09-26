@@ -10,6 +10,7 @@ import { ReceptorHeader } from "./components/ReceptorHeader";
 import { ReceptorToolbar } from "./components/ReceptorToolbar";
 import { ReceptorActiveFilters } from "./components/ReceptorActiveFilters";
 import { ReceptorLayout } from "./components/receptors/ReceptorLayout";
+import { FilterPanel } from "./components/receptors/FilterPanel";
 
 type Props = {
   stats: ReceptorStats;
@@ -33,10 +34,22 @@ export default function ReceptorsClient({ stats }: Props) {
       );
     });
 
+    if (filters.hasUniprot) {
+      out.push({ key: "hasUniprot", value: "Has UniProt" });
+    }
+
     return out;
   }, [filters]);
 
   function removeBadge(key: keyof ReceptorFilters, value: string) {
+    if (key === "hasUniprot") {
+      setFilters({
+        ...filters,
+        hasUniprot: undefined,
+      });
+      return;
+    }
+
     const arr = (filters[key] as string[] | undefined) ?? [];
     const next = arr.filter((x) => x !== value);
 
@@ -47,30 +60,48 @@ export default function ReceptorsClient({ stats }: Props) {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-16">
       <ReceptorHeader stats={stats} />
 
-      <ReceptorToolbar
-        search={search}
-        onSearchChange={setSearch}
-        view={view}
-        onViewChange={setView}
-        filters={filters}
-        onFiltersChange={setFilters}
-        onResetFilters={() => setFilters({})}
-        totalResults={data.length}
-      />
+      <div className="container-page py-6">
+        <div className="flex flex-col lg:flex-row lg:items-start gap-8">
+          {/* Desktop Filter Sidebar */}
+          <aside className="hidden lg:block w-64 shrink-0" aria-label="Desktop filters">
+            <div className="sticky top-20 rounded-lg border border-border bg-card p-4 shadow-2xs">
+              <FilterPanel
+                filters={filters}
+                onChange={setFilters}
+                onReset={() => setFilters({})}
+              />
+            </div>
+          </aside>
 
-      <ReceptorActiveFilters
-        activeBadges={activeBadges}
-        removeBadge={removeBadge}
-        setFilters={setFilters}
-      />
+          {/* Main Content Area */}
+          <main className="flex-1 min-w-0 space-y-4">
+            <ReceptorToolbar
+              search={search}
+              onSearchChange={setSearch}
+              view={view}
+              onViewChange={setView}
+              filters={filters}
+              onFiltersChange={setFilters}
+              onResetFilters={() => setFilters({})}
+              totalResults={data.length}
+            />
 
-      <ReceptorLayout
-        view={view}
-        data={data}
-      />
+            <ReceptorActiveFilters
+              activeBadges={activeBadges}
+              removeBadge={removeBadge}
+              setFilters={setFilters}
+            />
+
+            <ReceptorLayout
+              view={view}
+              data={data}
+            />
+          </main>
+        </div>
+      </div>
     </div>
   );
 }

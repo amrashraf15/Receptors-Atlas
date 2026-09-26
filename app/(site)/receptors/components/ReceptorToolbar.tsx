@@ -5,6 +5,7 @@ import {
   Search,
   SlidersHorizontal,
   Table as TableIcon,
+  X,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -49,7 +50,7 @@ export function ReceptorToolbar({
   totalResults,
 }: Props) {
   const activeFiltersCount = Object.entries(filters).filter(
-    ([_, value]) =>
+    ([, value]) =>
       value !== undefined &&
       value !== null &&
       value !== "" &&
@@ -57,38 +58,49 @@ export function ReceptorToolbar({
   ).length;
 
   return (
-    <section className="container-page mt-6 space-y-4">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-        {/* Search */}
+    <div className="space-y-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        {/* Search Input */}
         <div className="relative flex-1">
-          <Search className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
+          <Search className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 pointer-events-none" aria-hidden="true" />
 
           <Input
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search receptors..."
-            className="pl-10"
+            placeholder="Search gene symbol, description, or UniProt accession..."
+            aria-label="Search receptors"
+            className="ps-9 pe-8 h-9 text-xs sm:text-sm"
           />
+
+          {search && (
+            <button
+              type="button"
+              onClick={() => onSearchChange("")}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded"
+              aria-label="Clear search query"
+            >
+              <X className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+          )}
         </div>
 
-        {/* Desktop Actions */}
-        <div className="flex items-center gap-2">
-          {/* Mobile Filters */}
+        {/* Toolbar Controls */}
+        <div className="flex items-center justify-between sm:justify-end gap-2">
+          {/* Mobile Sheet Trigger */}
           <Sheet>
             <SheetTrigger asChild>
               <Button
                 variant="outline"
                 size="sm"
-                className="gap-2 lg:hidden"
+                className="gap-2 lg:hidden h-9 text-xs font-medium"
+                aria-label={`Open filter panel${activeFiltersCount > 0 ? `, ${activeFiltersCount} active` : ""}`}
               >
-                <SlidersHorizontal className="h-4 w-4" />
-
-                Filters
-
+                <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>Filters</span>
                 {activeFiltersCount > 0 && (
                   <Badge
                     variant="secondary"
-                    className="ml-1"
+                    className="ms-0.5 px-1.5 py-0 text-[10px] font-mono"
                   >
                     {activeFiltersCount}
                   </Badge>
@@ -98,13 +110,15 @@ export function ReceptorToolbar({
 
             <SheetContent
               side="left"
-              className="w-[320px] overflow-y-auto"
+              className="w-[300px] sm:w-[340px] overflow-y-auto p-6"
             >
-              <SheetHeader>
-                <SheetTitle>Filters</SheetTitle>
+              <SheetHeader className="pb-2">
+                <SheetTitle className="text-base font-semibold">
+                  Dataset Filters
+                </SheetTitle>
               </SheetHeader>
 
-              <div className="mt-6">
+              <div className="mt-4">
                 <FilterPanel
                   filters={filters}
                   onChange={onFiltersChange}
@@ -114,58 +128,47 @@ export function ReceptorToolbar({
             </SheetContent>
           </Sheet>
 
-          {/* View Switcher */}
-          <div className="bg-muted flex items-center rounded-lg p-1">
+          {/* View Toggle */}
+          <div
+            className="flex items-center rounded-md border border-border bg-muted/60 p-0.5"
+            role="group"
+            aria-label="View layout switch"
+          >
             <Button
-              variant={
-                view === "table"
-                  ? "default"
-                  : "ghost"
-              }
-              size="sm"
+              variant={view === "table" ? "default" : "ghost"}
+              size="xs"
               onClick={() => onViewChange("table")}
-              className="gap-2"
+              className="gap-1.5 h-7 px-2.5 text-xs font-medium"
+              aria-pressed={view === "table"}
             >
-              <TableIcon className="h-4 w-4" />
-              <span className="hidden sm:inline">
-                Table
-              </span>
+              <TableIcon className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>Table</span>
             </Button>
 
             <Button
-              variant={
-                view === "card"
-                  ? "default"
-                  : "ghost"
-              }
-              size="sm"
+              variant={view === "card" ? "default" : "ghost"}
+              size="xs"
               onClick={() => onViewChange("card")}
-              className="gap-2"
+              className="gap-1.5 h-7 px-2.5 text-xs font-medium"
+              aria-pressed={view === "card"}
             >
-              <LayoutGrid className="h-4 w-4" />
-              <span className="hidden sm:inline">
-                Cards
-              </span>
+              <LayoutGrid className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>Cards</span>
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Metadata Row */}
-      <div className="flex flex-wrap items-center gap-2">
-        {typeof totalResults === "number" && (
-          <p className="text-muted-foreground text-sm">
-            {totalResults.toLocaleString()} receptors
-          </p>
-        )}
-
-        {activeFiltersCount > 0 && (
-          <Badge variant="secondary">
-            {activeFiltersCount} active filter
-            {activeFiltersCount > 1 ? "s" : ""}
-          </Badge>
-        )}
+      {/* Result Metrics */}
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <div>
+          {typeof totalResults === "number" && (
+            <span>
+              Showing <span className="font-semibold text-foreground tabular-nums">{totalResults.toLocaleString()}</span> matching entries
+            </span>
+          )}
+        </div>
       </div>
-    </section>
+    </div>
   );
 }

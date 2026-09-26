@@ -1,68 +1,111 @@
 import Link from "next/link";
+import { Dna, ExternalLink } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-border bg-surface">
-      <div className="container-page grid gap-10 py-14 md:grid-cols-4">
+    <footer className="border-t border-border bg-card">
+      <div className="container-page grid gap-8 py-12 md:grid-cols-4 lg:gap-12">
         <div className="md:col-span-2">
-          <div className="font-semibold tracking-tight">
-            Receptor Research Portal
+          <div className="flex items-center gap-2 font-semibold tracking-tight text-foreground">
+            <span className="grid h-6 w-6 place-items-center rounded bg-primary text-primary-foreground font-mono text-[10px] font-bold">
+              <Dna className="h-3.5 w-3.5" aria-hidden="true" />
+            </span>
+            <span>ReceptorAtlas</span>
           </div>
 
-          <p className="mt-3 max-w-sm text-sm text-muted-foreground">
-            A scientific database for receptor classification,
-            expression profiles, and peer-reviewed research.
+          <p className="mt-3 max-w-sm text-xs sm:text-sm text-muted-foreground leading-relaxed">
+            A scientific database dedicated to wheat (*Triticum aestivum*) receptor-like kinases, sub-genome distribution, and protein functional annotations.
+          </p>
+
+          <p className="mt-2 text-xs text-muted-foreground">
+            Designed for plant biologists, molecular pathologists, and bioinformaticians.
           </p>
         </div>
 
         <div>
-          <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Platform
+          <div className="text-xs font-semibold uppercase tracking-wider text-foreground">
+            Navigation
           </div>
 
-          <ul className="space-y-2 text-sm">
+          <ul className="mt-3 space-y-2 text-xs sm:text-sm">
+            <li>
+              <Link
+                href="/"
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Overview
+              </Link>
+            </li>
             <li>
               <Link
                 href="/receptors"
-                className="hover:text-accent transition-colors"
+                className="text-muted-foreground transition-colors hover:text-foreground"
               >
-                Database
+                Receptor Database
               </Link>
             </li>
-
             <li>
               <Link
                 href="/about"
-                className="hover:text-accent transition-colors"
+                className="text-muted-foreground transition-colors hover:text-foreground"
               >
-                About
+                About & Methodology
               </Link>
             </li>
           </ul>
         </div>
 
         <div>
-          <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Resources
+          <div className="text-xs font-semibold uppercase tracking-wider text-foreground">
+            Scientific Resources
           </div>
 
-          <ul className="space-y-2 text-sm text-muted-foreground">
-            <li>UniProt</li>
-            <li>PubMed</li>
-            <li>Citations</li>
+          <ul className="mt-3 space-y-2 text-xs sm:text-sm">
+            <li>
+              <a
+                href="https://www.uniprot.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground"
+              >
+                UniProt Knowledgebase
+                <ExternalLink className="h-3 w-3 opacity-60" aria-hidden="true" />
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://www.ebi.ac.uk/interpro/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground"
+              >
+                InterPro Protein Families
+                <ExternalLink className="h-3 w-3 opacity-60" aria-hidden="true" />
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://plants.ensembl.org/Triticum_aestivum/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Ensembl Plants (Wheat)
+                <ExternalLink className="h-3 w-3 opacity-60" aria-hidden="true" />
+              </a>
+            </li>
           </ul>
         </div>
       </div>
 
-      <div className="border-t border-border">
-        <div className="container-page flex flex-col items-start justify-between gap-2 py-5 text-xs text-muted-foreground sm:flex-row">
+      <div className="border-t border-border bg-surface-subtle">
+        <div className="container-page flex flex-col items-center justify-between gap-2 py-4 text-xs text-muted-foreground sm:flex-row">
           <span>
-            © {new Date().getFullYear()} Receptor Research Portal.
-            For research and academic use.
+            © {new Date().getFullYear()} ReceptorAtlas. Open access research resource for academic and scientific use.
           </span>
 
-          <span className="font-mono">
-            v1.0
+          <span className="font-mono text-[11px]">
+            Release v1.2 • Triticum aestivum RLK
           </span>
         </div>
       </div>

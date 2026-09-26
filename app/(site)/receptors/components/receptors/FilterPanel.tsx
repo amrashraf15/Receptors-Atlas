@@ -1,16 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
-import type {
-  ReceptorFilters,
-} from "@/lib/receptors.repository";
-
+import { useId, useMemo } from "react";
+import type { ReceptorFilters } from "@/lib/receptors.repository";
 import {
   RECEPTOR_FAMILIES,
   LOCALIZATIONS,
   CHROMOSOMES,
 } from "@/data/receptors";
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -32,6 +28,8 @@ export function FilterPanel({ filters, onChange, onReset }: Props) {
     [filters.chromosomes]
   );
 
+  const baseId = useId();
+
   function toggleArrayFilter<
     K extends keyof Pick<
       ReceptorFilters,
@@ -39,9 +37,7 @@ export function FilterPanel({ filters, onChange, onReset }: Props) {
     >
   >(key: K, value: string) {
     const current = (filters[key] as string[] | undefined) ?? [];
-
     const exists = current.includes(value);
-
     const next = exists
       ? current.filter((v) => v !== value)
       : [...current, value];
@@ -59,102 +55,150 @@ export function FilterPanel({ filters, onChange, onReset }: Props) {
     });
   }
 
+  const hasAnyFilter =
+    Boolean(filters.hasUniprot) ||
+    families.length > 0 ||
+    localizations.length > 0 ||
+    chromosomes.length > 0;
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold">Filters</h2>
+      <div className="flex items-center justify-between border-b border-border pb-3">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-foreground">
+          Filter Dataset
+        </h2>
 
-        <Button variant="ghost" size="sm" onClick={onReset}>
-          Reset
-        </Button>
+        {hasAnyFilter && (
+          <Button
+            variant="ghost"
+            size="xs"
+            onClick={onReset}
+            className="text-xs text-muted-foreground hover:text-foreground h-7 px-2"
+          >
+            Reset all
+          </Button>
+        )}
       </div>
 
-      {/* Has UniProt */}
-      <div className="space-y-2">
+      {/* Verification / Annotations */}
+      <div className="space-y-2.5">
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          Cross-Reference
+        </div>
         <div className="flex items-center gap-2">
           <Checkbox
-            id="uniprot"
+            id={`${baseId}-uniprot`}
             checked={!!filters.hasUniprot}
             onCheckedChange={() => toggleBooleanFilter("hasUniprot")}
           />
-          <Label htmlFor="uniprot">Has UniProt ID</Label>
+          <Label
+            htmlFor={`${baseId}-uniprot`}
+            className="text-xs text-foreground cursor-pointer select-none"
+          >
+            Has UniProt Accession
+          </Label>
         </div>
       </div>
 
       {/* Families */}
-      <FilterGroup title="Families">
-        {RECEPTOR_FAMILIES.map((f) => (
-          <FilterItem
-            key={f}
-            label={f}
-            checked={families.includes(f)}
-            onChange={() => toggleArrayFilter("families", f)}
-          />
-        ))}
+      <FilterGroup title="Receptor Family" count={families.length}>
+        <div className="max-h-48 overflow-y-auto space-y-2 pe-1">
+          {RECEPTOR_FAMILIES.map((f, i) => (
+            <FilterItem
+              key={f}
+              id={`${baseId}-fam-${i}`}
+              label={f}
+              checked={families.includes(f)}
+              onChange={() => toggleArrayFilter("families", f)}
+            />
+          ))}
+        </div>
       </FilterGroup>
 
       {/* Localizations */}
-      <FilterGroup title="Localizations">
-        {LOCALIZATIONS.map((l) => (
-          <FilterItem
-            key={l}
-            label={l}
-            checked={localizations.includes(l)}
-            onChange={() => toggleArrayFilter("localizations", l)}
-          />
-        ))}
+      <FilterGroup title="Subcellular Localization" count={localizations.length}>
+        <div className="max-h-44 overflow-y-auto space-y-2 pe-1">
+          {LOCALIZATIONS.map((l, i) => (
+            <FilterItem
+              key={l}
+              id={`${baseId}-loc-${i}`}
+              label={l}
+              checked={localizations.includes(l)}
+              onChange={() => toggleArrayFilter("localizations", l)}
+            />
+          ))}
+        </div>
       </FilterGroup>
 
       {/* Chromosomes */}
-      <FilterGroup title="Chromosomes">
-        {CHROMOSOMES.map((c) => (
-          <FilterItem
-            key={c}
-            label={c}
-            checked={chromosomes.includes(c)}
-            onChange={() => toggleArrayFilter("chromosomes", c)}
-          />
-        ))}
+      <FilterGroup title="Chromosome / Sub-genome" count={chromosomes.length}>
+        <div className="grid grid-cols-2 gap-1.5 max-h-48 overflow-y-auto pe-1">
+          {CHROMOSOMES.map((c, i) => (
+            <FilterItem
+              key={c}
+              id={`${baseId}-chr-${i}`}
+              label={`Chr ${c}`}
+              checked={chromosomes.includes(c)}
+              onChange={() => toggleArrayFilter("chromosomes", c)}
+            />
+          ))}
+        </div>
       </FilterGroup>
     </div>
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* Sub Components                                                             */
-/* -------------------------------------------------------------------------- */
-
 function FilterGroup({
   title,
+  count,
   children,
 }: {
   title: string;
+  count?: number;
   children: React.ReactNode;
 }) {
   return (
-    <div className="space-y-2">
-      <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-        {title}
-      </h3>
-      <div className="space-y-2">{children}</div>
+    <div className="space-y-2.5">
+      <div className="flex items-center justify-between">
+        <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          {title}
+        </h3>
+        {count && count > 0 ? (
+          <span className="text-[10px] font-mono rounded bg-primary/10 text-primary px-1.5 py-0.2 font-medium">
+            {count}
+          </span>
+        ) : null}
+      </div>
+      {children}
     </div>
   );
 }
 
 function FilterItem({
+  id,
   label,
   checked,
   onChange,
 }: {
+  id: string;
   label: string;
   checked: boolean;
   onChange: () => void;
 }) {
   return (
     <div className="flex items-center gap-2">
-      <Checkbox checked={checked} onCheckedChange={onChange} />
-      <Label className="text-sm">{label}</Label>
+      <Checkbox
+        id={id}
+        checked={checked}
+        onCheckedChange={onChange}
+      />
+      <Label
+        htmlFor={id}
+        className="text-xs text-foreground cursor-pointer select-none leading-tight font-normal"
+      >
+        {label}
+      </Label>
     </div>
   );
 }

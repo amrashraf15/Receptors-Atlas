@@ -1,4 +1,4 @@
-import { Database, Network, Microscope, BookOpen } from "lucide-react";
+import { Database, Network, Microscope, BookOpen, Layers } from "lucide-react";
 import { AnimatedCounter } from "./AnimatedCounter";
 
 type Props = {
@@ -14,74 +14,70 @@ type Props = {
 export function StatsSection({ stats }: Props) {
   const items = [
     {
-      label: "Total Receptors",
+      label: "Indexed Kinases",
       value: stats.total,
+      suffix: "",
       icon: Database,
+      detail: "Curated gene models",
     },
     {
       label: "Receptor Families",
       value: stats.families,
+      suffix: "",
       icon: Network,
+      detail: "Structural classifications",
     },
     {
-      label: "Localizations",
+      label: "Subcellular Sites",
       value: stats.localizations,
+      suffix: "",
       icon: Microscope,
+      detail: "Membrane & cellular compartments",
     },
     {
-      label: "UniProt Entries",
+      label: "UniProt Cross-Refs",
       value: stats.withUniprot,
+      suffix: "",
       icon: BookOpen,
+      detail: "Verified protein entries",
+    },
+    {
+      label: "Mean Protein Size",
+      value: stats.averageLength,
+      suffix: " aa",
+      icon: Layers,
+      detail: "Average residue length",
     },
   ];
 
   return (
-    <section className="border-y border-border bg-background/50 backdrop-blur-xl">
-      <div className="container-page grid grid-cols-2 md:grid-cols-4 gap-4 py-10">
-        {items.map((item) => (
-          <div
-            key={item.label}
-            className="
-              group relative overflow-hidden rounded-2xl
-              border border-border/60
-              bg-card/60 backdrop-blur-xl
-              p-6
-              transition-all duration-300
-              hover:-translate-y-1 hover:shadow-xl
-              hover:border-accent/40
-            "
-          >
-            {/* subtle glow background */}
-            <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-accent/10 blur-2xl" />
-              <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-primary/10 blur-2xl" />
-            </div>
+    <section className="border-b border-border bg-card">
+      <div className="container-page py-8">
+        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-border/60">
+          {items.map((item, idx) => (
+            <div
+              key={item.label}
+              className={`flex flex-col justify-between ${
+                idx > 0 ? "pt-4 sm:pt-0 sm:ps-6" : ""
+              }`}
+            >
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <item.icon className="h-4 w-4 text-primary" aria-hidden="true" />
+                <span className="text-xs font-semibold uppercase tracking-wider">
+                  {item.label}
+                </span>
+              </div>
 
-            {/* icon */}
-            <div className="flex items-center justify-between">
-              <div
-                className="
-                  flex h-10 w-10 items-center justify-center rounded-xl
-                  bg-muted/60
-                  text-accent
-                  ring-1 ring-border/50
-                "
-              >
-                <item.icon className="h-5 w-5" />
+              <div className="mt-2.5 text-2xl sm:text-3xl font-bold tracking-tight text-foreground tabular-nums">
+                <AnimatedCounter value={item.value} suffix={item.suffix} />
+              </div>
+
+              <div className="mt-1 text-xs text-muted-foreground">
+                {item.detail}
               </div>
             </div>
-
-            {/* number */}
-            <div className="mt-6 text-3xl font-semibold tracking-tight text-foreground">
-              <AnimatedCounter value={item.value} />
-            </div>
-
-            {/* label */}
-            <div className="mt-1 text-xs uppercase tracking-wider text-muted-foreground">
-              {item.label}
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );

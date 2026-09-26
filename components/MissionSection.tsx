@@ -1,80 +1,60 @@
-import {
-  Target,
-  Compass,
-  FlaskConical,
-} from "lucide-react";
+import { Compass, Target, ShieldCheck } from "lucide-react";
 
-const cards = [
+const pillars = [
   {
     icon: Target,
-    title: "Mission",
-    body:
-      "Provide researchers with accurate, standardized receptor data and accelerate discovery through transparent classification.",
+    title: "Systematic Genome Curation",
+    description:
+      "Resolving functional kinase gene models across the three sub-genomes (A, B, and D) of bread wheat using high-confidence IWGSC assembly annotations and consensus gene structures.",
   },
   {
     icon: Compass,
-    title: "Vision",
-    body:
-      "Become the reference database for receptor science, bridging molecular research and clinical pharmacology.",
+    title: "Domain Architecture Standardization",
+    description:
+      "Classifying extracellular sensory domains (such as leucine-rich repeats, lectins, and wall-associated motifs) alongside conserved intracellular serine/threonine kinase catalytic domains.",
   },
   {
-    icon: FlaskConical,
-    title: "Research Objectives",
-    body:
-      "Index expression profiles, capture publication trails, and support reproducible scientific workflows.",
+    icon: ShieldCheck,
+    title: "Translational Crop Protection",
+    description:
+      "Supporting molecular breeding and functional biology research targeted at disease resistance against fungal pathogens (e.g., Puccinia rusts) and environmental resilience.",
   },
 ];
 
 export function MissionSection() {
   return (
-    <section className="relative border-t border-border/60 bg-background/40 backdrop-blur-xl">
-      <div className="container-page py-20">
-        <div className="grid gap-6 md:grid-cols-3">
-          {cards.map((card) => (
-            <article
-              key={card.title}
-              className="
-                group relative overflow-hidden
-                rounded-2xl border border-border/60
-                bg-card/60 backdrop-blur-xl
-                p-6
-                transition-all duration-300
-                hover:-translate-y-1 hover:shadow-xl
-                hover:border-accent/40
-              "
+    <section className="border-b border-border bg-card py-14 sm:py-18">
+      <div className="container-page">
+        <div className="max-w-2xl">
+          <div className="text-xs font-semibold uppercase tracking-wider text-primary">
+            Scientific Objectives
+          </div>
+          <h2 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+            Core Research Mission & Priorities
+          </h2>
+          <p className="mt-2 text-sm sm:text-base text-muted-foreground leading-relaxed">
+            Establishing an authoritative, open-access knowledge base for plant receptor signaling and molecular taxonomy.
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
+          {pillars.map((pillar) => (
+            <div
+              key={pillar.title}
+              className="flex flex-col rounded-lg border border-border bg-surface-subtle p-6 shadow-2xs"
             >
-              {/* ambient glow */}
-              <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-accent/10 blur-3xl" />
-                <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-primary/10 blur-3xl" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">
+                <pillar.icon className="h-5 w-5" aria-hidden="true" />
               </div>
 
-              {/* ICON */}
-              <div
-                className="
-                  relative flex h-11 w-11 items-center justify-center
-                  rounded-xl border border-border/60
-                  bg-muted/50 text-accent
-                  transition-all duration-300
-                  group-hover:scale-110 group-hover:rotate-6
-                "
-              >
-                <card.icon className="h-5 w-5" />
-              </div>
+              <h3 className="mt-4 text-base font-semibold text-foreground">
+                {pillar.title}
+              </h3>
 
-              {/* TITLE */}
-              <h2 className="relative mt-5 text-lg font-semibold text-foreground">
-                {card.title}
-              </h2>
-
-              {/* BODY */}
-              <p className="relative mt-2 text-sm text-muted-foreground leading-relaxed">
-                {card.body}
+              <p className="mt-2 text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                {pillar.description}
               </p>
-
-              {/* subtle bottom accent line */}
-              <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-border/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-            </article>
+            </div>
           ))}
         </div>
       </div>

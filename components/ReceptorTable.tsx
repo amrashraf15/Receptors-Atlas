@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-
 import {
   flexRender,
   getCoreRowModel,
@@ -12,206 +11,160 @@ import {
   type ColumnDef,
   type SortingState,
 } from "@tanstack/react-table";
-
 import {
   ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-
 import type { Receptor } from "@/types/receptor";
 
 function safeNumber(value: unknown): string {
   if (value == null) return "—";
-
   const num = Number(value);
-
   if (Number.isNaN(num)) return "—";
-
   return num.toLocaleString();
 }
 
-const statusColor: Record<string, string> = {
-  validated:
-    "border-emerald-500/20 bg-emerald-500/10 text-emerald-300",
-  under_review:
-    "border-cyan-500/20 bg-cyan-500/10 text-cyan-300",
-  predicted:
-    "border-white/10 bg-white/5 text-muted-foreground",
-  deprecated:
-    "border-red-500/20 bg-red-500/10 text-red-300",
-};
-
-const statusLabel: Record<string, string> = {
-  validated: "Validated",
-  under_review: "Under Review",
-  predicted: "Predicted",
-  deprecated: "Deprecated",
+const statusConfig: Record<
+  string,
+  { label: string; className: string }
+> = {
+  validated: {
+    label: "Validated",
+    className:
+      "border-emerald-600/30 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 dark:border-emerald-500/30",
+  },
+  under_review: {
+    label: "Under Review",
+    className:
+      "border-sky-600/30 bg-sky-500/10 text-sky-800 dark:text-sky-300 dark:border-sky-500/30",
+  },
+  predicted: {
+    label: "Predicted",
+    className:
+      "border-border bg-muted text-muted-foreground",
+  },
+  deprecated: {
+    label: "Deprecated",
+    className:
+      "border-red-600/30 bg-red-500/10 text-red-800 dark:text-red-300 dark:border-red-500/30",
+  },
 };
 
 interface ReceptorTableProps {
   data: Receptor[];
 }
 
-export function ReceptorTable({
-  data,
-}: ReceptorTableProps) {
-  const [sorting, setSorting] =
-    useState<SortingState>([]);
+export function ReceptorTable({ data }: ReceptorTableProps) {
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const columns = useMemo<ColumnDef<Receptor>[]>(
     () => [
       {
         accessorKey: "seqName",
-        header: "Symbol",
-
+        header: "Gene Symbol",
         cell: ({ row }) => (
           <Link
             href={`/receptors/${row.original.id}`}
-            className="group inline-flex flex-col"
+            className="group inline-flex flex-col focus-visible:outline-none focus-visible:underline"
           >
-            <span
-              className="
-                font-mono
-                font-semibold
-                tracking-wide
-                text-primary
-                transition-colors
-                group-hover:text-foreground
-              "
-            >
+            <span className="font-mono text-xs sm:text-sm font-semibold text-primary group-hover:underline">
               {row.original.seqName}
             </span>
-
-            <span
-              className="
-                text-[10px]
-                uppercase
-                tracking-[0.18em]
-                text-muted-foreground
-              "
-            >
-              receptor
-            </span>
+            {row.original.chromosome && (
+              <span className="text-[10px] text-muted-foreground font-mono">
+                Chr {row.original.chromosome}
+              </span>
+            )}
           </Link>
         ),
       },
-
       {
         accessorKey: "description",
-        header: "Name",
-
+        header: "Functional Description",
         cell: ({ getValue }) => (
-          <span className="text-sm leading-relaxed">
+          <span className="text-xs sm:text-sm text-foreground leading-relaxed line-clamp-2 max-w-sm">
             {getValue() as string}
           </span>
         ),
       },
-
       {
         accessorKey: "family",
         header: "Family",
-
         cell: ({ getValue }) => (
-          <span className="text-sm text-muted-foreground">
+          <span className="text-xs font-medium text-foreground whitespace-nowrap">
             {getValue() as string}
           </span>
         ),
       },
-
       {
         accessorKey: "species",
-        header: "Species",
-
+        header: "Organism",
         cell: ({ getValue }) => (
-          <span
-            className="
-              font-mono
-              text-xs
-              tracking-wide
-              text-muted-foreground
-            "
-          >
+          <span className="italic text-xs text-muted-foreground whitespace-nowrap">
             {getValue() as string}
           </span>
         ),
       },
-
       {
         accessorKey: "localizations",
         header: "Localization",
-
         cell: ({ getValue }) => {
-          const value =
-            getValue() as string[] | undefined;
-
+          const value = getValue() as string[] | undefined;
           return (
-            <span className="text-sm">
-              {(value ?? []).join(", ")}
+            <span className="text-xs text-muted-foreground whitespace-nowrap">
+              {(value ?? []).join(", ") || "—"}
             </span>
           );
         },
       },
-
       {
         accessorKey: "length",
         header: "Length",
-
         cell: ({ getValue }) => (
-          <span className="tabular-nums text-sm">
-            {safeNumber(getValue())}
+          <span className="tabular-nums text-xs text-foreground font-mono">
+            {safeNumber(getValue())} aa
           </span>
         ),
       },
-
       {
         accessorKey: "molecularWeight",
-        header: "MW",
-
+        header: "MW (Da)",
         cell: ({ getValue }) => (
-          <span className="tabular-nums text-sm">
+          <span className="tabular-nums text-xs text-muted-foreground font-mono">
             {safeNumber(getValue())}
           </span>
         ),
       },
-
       {
         accessorKey: "isoelectricPoint",
         header: "pI",
-
         cell: ({ getValue }) => (
-          <span className="tabular-nums text-sm">
+          <span className="tabular-nums text-xs text-muted-foreground font-mono">
             {safeNumber(getValue())}
           </span>
         ),
       },
-
       {
         accessorKey: "status",
         header: "Status",
-
         cell: ({ getValue }) => {
-          const status =
-            (getValue() as string) ?? "predicted";
+          const status = (getValue() as string) ?? "predicted";
+          const config = statusConfig[status] ?? {
+            label: status.replaceAll("_", " "),
+            className: "border-border bg-muted text-muted-foreground",
+          };
 
           return (
             <Badge
               variant="outline"
-              className={`
-                rounded-full
-                px-3
-                py-1
-                text-[11px]
-                tracking-wide
-                backdrop-blur-md
-                ${statusColor[status] ?? ""}
-              `}
+              className={`rounded-full px-2 py-0.5 text-[10px] font-medium tracking-wide ${config.className}`}
             >
-              {statusLabel[status] ??
-                status.replaceAll("_", " ")}
+              {config.label}
             </Badge>
           );
         },
@@ -223,281 +176,163 @@ export function ReceptorTable({
   const table = useReactTable({
     data,
     columns,
-
     state: {
       sorting,
     },
-
     onSortingChange: setSorting,
-
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel:
-      getPaginationRowModel(),
-
+    getPaginationRowModel: getPaginationRowModel(),
     initialState: {
       pagination: {
-        pageSize: 12,
+        pageSize: 15,
       },
     },
   });
 
   return (
-    <section className="space-y-6">
-      <div
-        className="
-          flex
-          flex-col
-          gap-4
-          md:flex-row
-          md:items-end
-          md:justify-between
-        "
-      >
-        <div>
-          <p
-            className="
-              mb-2
-              text-xs
-              uppercase
-              tracking-[0.35em]
-              text-primary
-            "
-          >
-            Receptor Dataset
-          </p>
+    <div className="rounded-lg border border-border bg-card shadow-2xs overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full text-start text-xs sm:text-sm">
+          <thead className="border-b border-border bg-muted/50">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header, index) => {
+                  const isSorted = header.column.getIsSorted();
+                  const isFirst = index === 0;
 
-          <h2
-            className="
-              font-display
-              text-4xl
-              md:text-5xl
-              leading-none
-            "
-          >
-            Curated Receptors
-          </h2>
-        </div>
-
-        <div
-          className="
-            text-xs
-            uppercase
-            tracking-[0.25em]
-            text-muted-foreground
-          "
-        >
-          {data.length.toLocaleString()} Entries
-        </div>
-      </div>
-
-      <div
-        className="
-          glass-panel
-          relative
-          overflow-hidden
-          rounded-[2rem]
-        "
-      >
-        <div
-          className="
-            pointer-events-none
-            absolute
-            inset-0
-            bg-[linear-gradient(to_bottom,transparent,rgba(142,247,208,0.015),transparent)]
-          "
-        />
-
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[1200px]">
-            <thead
-              className="
-                sticky
-                top-0
-                z-20
-                border-b
-                border-white/10
-                bg-card/80 
-                backdrop-blur-xl
-              "
-            >
-              {table.getHeaderGroups().map(
-                (headerGroup) => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map(
-                      (header) => (
-                        <th
-                          key={header.id}
-                          className="
-                            px-6
-                            py-5
-                            text-left
-                            text-[11px]
-                            uppercase
-                            tracking-[0.25em]
-                            text-muted-foreground
-                            font-medium
-                          "
+                  return (
+                    <th
+                      key={header.id}
+                      scope="col"
+                      aria-sort={
+                        isSorted
+                          ? isSorted === "asc"
+                            ? "ascending"
+                            : "descending"
+                          : "none"
+                      }
+                      className={`px-3.5 py-3 text-start text-[11px] font-semibold uppercase tracking-wider text-muted-foreground whitespace-nowrap ${
+                        isFirst
+                          ? "sticky start-0 z-10 bg-muted/95 backdrop-blur-xs border-e border-border/80"
+                          : ""
+                      }`}
+                    >
+                      {header.isPlaceholder ? null : (
+                        <button
+                          type="button"
+                          onClick={header.column.getToggleSortingHandler()}
+                          className="inline-flex items-center gap-1.5 font-semibold text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                          aria-label={`Sort by ${typeof header.column.columnDef.header === "string" ? header.column.columnDef.header : header.id}`}
                         >
-                          {header.isPlaceholder
-                            ? null
-                            : (
-                              <button
-                                onClick={header.column.getToggleSortingHandler()}
-                                className="
-                                  inline-flex
-                                  items-center
-                                  gap-2
-                                  transition-colors
-                                  hover:text-foreground
-                                "
-                              >
-                                {flexRender(
-                                  header.column
-                                    .columnDef.header,
-                                  header.getContext()
-                                )}
-
-                                <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />
-                              </button>
+                          <span>
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
                             )}
-                        </th>
-                      )
-                    )}
-                  </tr>
-                )
-              )}
-            </thead>
+                          </span>
 
-            <tbody>
-              {table
-                .getRowModel()
-                .rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="
-                      border-b
-                      border-white/5
-                      transition-all
-                      duration-300
-                      hover:bg-muted/50
-                    "
-                  >
-                    {row
-                      .getVisibleCells()
-                      .map((cell) => (
-                        <td
-                          key={cell.id}
-                          className="
-                            px-6
-                            py-5
-                            align-middle
-                          "
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
+                          {isSorted === "asc" ? (
+                            <ArrowUp className="h-3 w-3 text-primary" aria-hidden="true" />
+                          ) : isSorted === "desc" ? (
+                            <ArrowDown className="h-3 w-3 text-primary" aria-hidden="true" />
+                          ) : (
+                            <ArrowUpDown className="h-3 w-3 opacity-40" aria-hidden="true" />
                           )}
-                        </td>
-                      ))}
-                  </tr>
-                ))}
+                        </button>
+                      )}
+                    </th>
+                  );
+                })}
+              </tr>
+            ))}
+          </thead>
 
-              {table.getRowModel().rows
-                .length === 0 && (
-                <tr>
-                  <td
-                    colSpan={columns.length}
-                    className="py-24 text-center"
-                  >
-                    <div className="space-y-3">
-                      <p className="text-lg font-medium">
-                        No receptors found
-                      </p>
+          <tbody className="divide-y divide-border/60">
+            {table.getRowModel().rows.map((row) => (
+              <tr
+                key={row.id}
+                className="transition-colors hover:bg-muted/40"
+              >
+                {row.getVisibleCells().map((cell, index) => {
+                  const isFirst = index === 0;
+                  return (
+                    <td
+                      key={cell.id}
+                      className={`px-3.5 py-3 align-middle ${
+                        isFirst
+                          ? "sticky start-0 z-1 bg-card border-e border-border/80"
+                          : ""
+                      }`}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
 
-                      <p className="text-muted-foreground">
-                        Try adjusting the search
-                        criteria.
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+            {table.getRowModel().rows.length === 0 && (
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  className="py-12 text-center text-muted-foreground"
+                >
+                  No receptors match the current filter selection.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination Footer */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-border bg-surface-subtle px-4 py-3 text-xs text-muted-foreground">
+        <div>
+          Page{" "}
+          <span className="font-semibold text-foreground font-mono">
+            {table.getState().pagination.pageIndex + 1}
+          </span>{" "}
+          of{" "}
+          <span className="font-semibold text-foreground font-mono">
+            {table.getPageCount() || 1}
+          </span>
+          {" • "}
+          <span className="font-semibold text-foreground tabular-nums">
+            {data.length.toLocaleString()}
+          </span>{" "}
+          records
         </div>
 
-        <div
-          className="
-            flex
-            items-center
-            justify-between
-            border-t
-            border-border/60
-            bg-white/2
-            px-6
-            py-5
-          "
-        >
-          <span
-            className="
-              text-sm
-              text-muted-foreground
-            "
+        <div className="flex items-center gap-1.5">
+          <Button
+            variant="outline"
+            size="xs"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+            aria-label="Previous page"
+            className="h-7 gap-1 px-2 text-xs"
           >
-            Page{" "}
-            {table.getState().pagination
-              .pageIndex + 1}
-            {" "}of{" "}
-            {table.getPageCount()}
-            {" • "}
-            {data.length.toLocaleString()}
-            {" "}results
-          </span>
+            <ChevronLeft className="h-3.5 w-3.5 rtl:rotate-180" aria-hidden="true" />
+            <span>Prev</span>
+          </Button>
 
-          <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() =>
-                table.previousPage()
-              }
-              disabled={
-                !table.getCanPreviousPage()
-              }
-              className="
-                rounded-full
-                border
-                border-white/10
-                hover:border-primary/40
-                hover:bg-primary/5
-              "
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() =>
-                table.nextPage()
-              }
-              disabled={
-                !table.getCanNextPage()
-              }
-              className="
-                rounded-full
-                border
-                border-white/10
-                hover:border-primary/40
-                hover:bg-primary/5
-              "
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            size="xs"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+            aria-label="Next page"
+            className="h-7 gap-1 px-2 text-xs"
+          >
+            <span>Next</span>
+            <ChevronRight className="h-3.5 w-3.5 rtl:rotate-180" aria-hidden="true" />
+          </Button>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
